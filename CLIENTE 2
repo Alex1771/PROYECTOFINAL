@@ -1,0 +1,121 @@
+using Clases.ApiRest;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using FireSharp.Response;
+using FireSharp.Config;
+using FireSharp.Interfaces;
+using FireSharp;
+
+
+
+namespace Clases
+{
+    public partial class Form1 : Form
+    {
+        DBApi dBApi = new DBApi();
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+
+        private void btnListar_Click(object sender, EventArgs e)
+        {
+            dynamic response = dBApi.Get("http://localhost:64874/api/INFOCANDIDATOS");
+            //textNombre.Text = response.Nombre.ToString();
+            //MessageBox.Show(response.ToString());
+            dgvPersona.DataSource = response;
+            
+
+        }
+
+
+        private void dgvPersona_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // TODO: esta línea de código carga datos en la tabla 'iNEDataSet.INFOCANDIDATOS' Puede moverla o quitarla según sea necesario.
+            //this.iNFOCANDIDATOSTableAdapter.Fill(this.iNEDataSet.INFOCANDIDATOS);
+
+        }
+
+        private void textBusqueda_TextChanged(object sender, EventArgs e)
+        {
+            dgvPersona.CurrentCell = null;
+
+            foreach (DataGridViewRow fila in dgvPersona.Rows)
+            {
+                fila.Visible = fila.Cells["partidoDataGridViewTextBoxColumn"].Value.ToString().ToUpper().Contains(textBusqueda.Text.ToUpper());
+            }
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+
+
+    public class Candidatos
+    {
+        public string Partido { get; set; }
+        public string Candidatura { get; set; }
+        public string Nombre { get; set; }
+        public string Apellidos { get; set; }
+        public string InfoCandi { get; set; }
+    }
+
+    
+}
+
+//DBApi consumiendo api
+
+using Newtonsoft.Json;
+using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using System.Windows.Forms;
+
+namespace Clases.ApiRest
+{
+    public class DBApi
+    {
+        
+
+        public dynamic Get(string url)
+        {
+            HttpWebRequest myWebRequest = (HttpWebRequest)WebRequest.Create(url);
+            myWebRequest.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0";
+            //myWebRequest.CookieContainer = myCookie;
+            myWebRequest.Credentials = CredentialCache.DefaultCredentials;
+            myWebRequest.Proxy = null;
+            HttpWebResponse myHttpWebResponse = (HttpWebResponse)myWebRequest.GetResponse();
+            Stream myStream = myHttpWebResponse.GetResponseStream();
+            StreamReader myStreamReader = new StreamReader(myStream);
+            //Leemos los datos
+            string Datos = HttpUtility.HtmlDecode(myStreamReader.ReadToEnd());
+            //MessageBox.Show(Datos);
+            dynamic data = JsonConvert.DeserializeObject(Datos);
+
+            return data;
+        }
+
+    }
+}
