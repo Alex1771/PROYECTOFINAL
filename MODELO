@@ -1,0 +1,57 @@
+using Candidatos.Datos;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace Candidatos.Models
+{
+    public class Candi
+    {
+        public int IDCandi { get; set; }
+        public string Partido { get; set; }
+        public string Candidatura { get; set; }
+        public string Nombre { get; set; }
+        public string Apellidos { get; set; }
+        public string InfoCandi { get; set; }
+
+        
+        public static Respuesta Agregar(Candi candi)
+        {
+            List<Parametro> parametros = new List<Parametro>
+            {
+                new Parametro("@Partido", candi.Partido),
+                new Parametro("@Candidatura", candi.Candidatura),
+                new Parametro("@Nombre", candi.Nombre),
+                new Parametro("@Apellidos", candi.Apellidos),
+                new Parametro("@InfoCandi", candi.InfoCandi)
+            };
+
+            return DBDatos.Ejecutar("INFOCANDIDATOS_Agregar", parametros );
+        }
+
+        public static Respuesta ListarxPartido(string Partido)
+        {
+            List<Parametro> parametros = new List<Parametro>
+            {
+                new Parametro("@Partido", Partido)
+            };
+
+            return DBDatos.Listar("INFOCANDIDATOS_ListarxPartido", parametros);
+        }
+
+        public static Respuesta Listar2xNombre(string Nombre)
+        {
+            List<Parametro> parametros = new List<Parametro>
+            {
+                new Parametro("@Nombre", Nombre)
+            };
+
+            return DBDatos.ListarNombre("INFOCANDIDATOS_Listar2xNombre", parametros);
+        }
+
+
+      
+
+    }
+}
