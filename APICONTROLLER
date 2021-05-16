@@ -1,0 +1,73 @@
+using Candidatos.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Http;
+using System.Data;
+using System.Data.Entity;
+
+namespace Candidatos.Controllers
+{
+    public class INFOCANDIDATOSController : ApiController
+    {
+        public INFOCANDIDATOSController()
+        {
+            con = new INEEntities();
+        }
+        public INEEntities con;
+        [HttpGet]
+        public List<INFOCANDIDATO> GetPartidos()
+        {
+            var consulta = (from pa in con.INFOCANDIDATOS select pa);
+            return consulta.ToList();
+        }
+
+
+  
+        [Route("api/Candi/Listar")]
+        [HttpGet]
+        public dynamic Listar(string Partido)
+        {
+            return Candi.ListarxPartido(Partido);
+        }
+
+        [Route("api/Candi/ListarNombre")]
+        [HttpGet]
+        public dynamic ListarNombre(string Nombre)
+        {
+            return Candi.Listar2xNombre(Nombre);
+        }
+
+        [Route("api/Candi/Crear")]
+        [HttpPost]
+        public dynamic Crear(Candi candi)
+        {
+            return Candi.Agregar(candi);
+        }
+
+        //[Route("api/Candi/Eliminar")]
+        [HttpDelete]
+        public bool DeleteCandidatos(int id)
+        {
+            
+            using (INEEntities con = new INEEntities())
+            {
+                //con.Connection.Open();
+                var busqueda = (from e in con.INFOCANDIDATOS where e.IDCandi == id select e).FirstOrDefault();
+                if (busqueda != null)
+                {
+                    con.INFOCANDIDATOS.Remove(busqueda);
+                    con.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+
+    }
+}
